@@ -1,0 +1,7 @@
+protobuf==5.28.0
+py-multibase==1.0.3
+cryptography==3.4.7
+pytest==6.2.5
+multiformats==0.3.1
+pytest-asyncio==0.15.1
+base58==2.1.1
