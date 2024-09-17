@@ -179,6 +179,7 @@ class ModelInstanceDocument:
         self.ceramic_client.apply_commit(self.stream_id, commit, opts)
         self.content = new_content
         self.state = self.ceramic_client.get_stream_state(self.stream_id)
+        return self
 
     def patch(
         self,
