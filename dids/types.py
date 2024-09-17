@@ -1,9 +1,11 @@
+from dataclasses import dataclass
 from typing import TypedDict, Union, Dict, Optional, List, Any
 
-from .jwe import JWE
 from .codecs import GeneralJWS
+from jwt.jwe import JWE
 
 
+@dataclass
 class CreateJWSParams(TypedDict):
     payload: Union[str, Dict[str, any]]
     protected: Optional[Dict[str, any]]
@@ -11,12 +13,14 @@ class CreateJWSParams(TypedDict):
     did: str
 
 
+@dataclass
 class AuthParams(TypedDict):
     paths: List[str]
     nonce: str
     aud: Optional[str]
 
 
+@dataclass
 class DecryptJWEParams(TypedDict):
     jwe: JWE
     did: Optional[str]

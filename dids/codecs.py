@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional, Any
+from multiformats import CID
 
 
 @dataclass
@@ -18,4 +19,4 @@ class GeneralJWS:
 class DagJWS:
     payload: str
     signatures: List[JWSSignature]
-    link: Optional[Any] = None
+    link: Optional[CID] = None

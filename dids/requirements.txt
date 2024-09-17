@@ -1,0 +1,2 @@
+did-resolver==0.0.3
+jwcrypto==1.5.6

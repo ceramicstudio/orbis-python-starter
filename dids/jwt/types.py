@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional, List
 
 
 @dataclass
@@ -43,3 +43,13 @@ class JWE:
     tag: str
     aad: Optional[str] = None
     recipients: Optional[List[Recipient]] = None
+
+
+@dataclass
+class EncryptionResult:
+    ciphertext: bytes
+    tag: Optional[bytes] = None
+    iv: Optional[bytes] = None
+    protectedHeader: Optional[str] = None
+    recipient: Optional[Recipient] = None
+    cek: Optional[bytes] = None

@@ -16,7 +16,7 @@ def encode_base64(bytes_data: bytes) -> str:
 
 
 def encode_base64_url(bytes_data: bytes) -> str:
-    return base64.urlsafe_b64encode(bytes_data).decode('utf-8')
+    return base64.urlsafe_b64encode(bytes_data).rstrip(b'=').decode('utf-8')
 
 
 def decode_base64(s: str) -> bytes:
@@ -24,7 +24,8 @@ def decode_base64(s: str) -> bytes:
 
 
 def base64url_to_json(s: str) -> Dict[str, Any]:
-    decoded_bytes = base64.urlsafe_b64decode(s.encode('utf-8'))
+    padding = '=' * (-len(s) % 4)
+    decoded_bytes = base64.urlsafe_b64decode(s + padding)
     return json.loads(decoded_bytes.decode('utf-8'))
 
 
@@ -37,7 +38,7 @@ def did_with_time(did: str, at_time: Optional[datetime] = None) -> str:
 
 
 def from_dag_jws(jws: DagJWS) -> str:
-    if len(jws.signatures) > 1 or len(jws.signatures) == 0:
+    if len(jws.signatures) != 1:
         raise ValueError('Cant convert to compact jws')
 
     return f"{jws.signatures[0].protected}.{jws.payload}.{jws.signatures[0].signature}"
