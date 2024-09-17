@@ -26,9 +26,6 @@ content = {
     "updatedAt": "2024-09-12T00:50:21.647Z",
 }
 
-# Add debug statements before the create call
-print("Metadata Args:", metadata_args.controller)
-print("Content:", content)
 
 try:
     doc = ModelInstanceDocument.create(ceramic_client, content, metadata_args)
@@ -36,6 +33,3 @@ except Exception as e:
     print("Error creating document:", e)
     raise
 
-print(f"Created document with stream ID: {doc.stream_id}")
-print(f"Content: {doc.content}")
-print(f"Metadata: {doc.metadata.__dict__}")

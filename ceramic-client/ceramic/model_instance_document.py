@@ -103,7 +103,6 @@ class ModelInstanceDocument:
         stream_id = ceramic_client.create_stream_from_genesis(
             cls.STREAM_TYPE_ID, commit, opts
         )
-        print(stream_id , "stream_id")
         state = ceramic_client.get_stream_state(stream_id)
         metadata = ModelInstanceDocumentMetadata(
             controller=metadata_args.controller or signer.id,
@@ -136,7 +135,6 @@ class ModelInstanceDocument:
         state = ceramic_client.load_stream(stream_id, opts)
         content = state.get("content")
         metadata_state = state.get("metadata", {})
-        print(metadata_state , "metadata_state")
         metadata = ModelInstanceDocumentMetadata(
             controller=metadata_state.get("controllers", [None])[0],
             model=metadata_state.get("model"),
@@ -257,7 +255,6 @@ class ModelInstanceDocument:
         metadata_args: ModelInstanceDocumentMetadataArgs,
         unique: Optional[List[str]] = None,
     ):
-        print(metadata_args.deterministic)
         if not metadata_args.model:
             raise ValueError(
                 "Must specify a 'model' when creating a ModelInstanceDocument"
