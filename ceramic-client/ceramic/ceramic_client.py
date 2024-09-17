@@ -5,7 +5,7 @@ from typing import Any, Dict
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 
 class CeramicClient:
@@ -21,7 +21,6 @@ class CeramicClient:
             "genesis": commit,
             "opts": opts,
         }
-        print(payload, "payload")
         response = requests.post(f"{self.url}/api/v0/streams", json=payload, timeout=10)
         logging.debug(f"Request URL: {f'{self.url}/api/v0/streams'}")
         logging.debug(f"Request Data: {payload}")

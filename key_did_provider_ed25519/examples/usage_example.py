@@ -15,7 +15,7 @@ async def main():
         "method": "did_authenticate",
         "params": auth_params
     })
-    print("Authentication result:", auth_result)
+
     
     # Example JWE creation and decryption
     jwe_params = {
@@ -26,13 +26,11 @@ async def main():
         "method": "did_createJWE",
         "params": jwe_params
     })
-    print("JWE creation result:", jwe_result)
     
     decrypt_result = await provider.send({
         "method": "did_decryptJWE",
         "params": {"jwe": jwe_result["jwe"]}
     })
-    print("JWE decryption result:", decrypt_result)
 
 if __name__ == "__main__":
     asyncio.run(main())

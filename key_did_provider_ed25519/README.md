@@ -35,7 +35,6 @@ async def main():
         }
     })
     
-    print("Authentication result:", auth_result)
 
 # Run the main function
 asyncio.run(main())

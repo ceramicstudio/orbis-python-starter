@@ -29,6 +29,11 @@ content = {
 
 try:
     doc = ModelInstanceDocument.create(ceramic_client, content, metadata_args)
+    print(doc.stream_id , "stream_id")
+    loaded = ModelInstanceDocument.load(ceramic_client, doc.stream_id)
+    print(loaded.stream_id , "stream_id")
+
+
 except Exception as e:
     print("Error creating document:", e)
     raise
