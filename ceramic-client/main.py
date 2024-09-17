@@ -1,5 +1,3 @@
-# main.py
-
 from ceramic.did import DID
 from ceramic.ceramic_client import CeramicClient
 from ceramic.model_instance_document import (
@@ -19,7 +17,7 @@ print(did.id , "did")
 # Create a new ModelInstanceDocument
 metadata_args = ModelInstanceDocumentMetadataArgs(
     controller=did.id,
-    model=bytes(bytearray([206,   1,   2,  1, 133,   1,  18,  32, 115, 248,  64,  23, 96,  18,   2, 108, 162, 214, 56, 140,  91, 25, 194, 157,  30,  21, 183, 181, 217,  93, 31,  34,  81, 224,  61, 221, 190, 211, 207, 85])),
+    model="kjzl6hvfrbw6c7wjdc58s11ru9y3h2ubzq6yixqy134xkc63bnnzjcnwaimf711",
 )
 
 content = {

@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Union
 from base64 import urlsafe_b64encode,b64encode
 from .ceramic_client import CeramicClient
 from .did import DID
-from .helper import validate_content_length
+from .helper import validate_content_length, base36_decode_with_prefix
 
 
 DEFAULT_CREATE_OPTS = {
@@ -268,8 +268,8 @@ class ModelInstanceDocument:
         controller = metadata_args.controller or signer.as_controller()
         header = {
             "controllers": [controller],  # Remove the extra list encapsulation
-            "model": metadata_args.model,
             "sep": "model",
+            "model": bytes(bytearray(list(base36_decode_with_prefix(metadata_args.model)))),
         }
 
         if metadata_args.deterministic:

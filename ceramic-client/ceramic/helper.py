@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+from multiformats.multibase import base36
 from base64 import urlsafe_b64encode, b64encode, b64decode
 from jwcrypto import jwk, jws
 from jwcrypto.common import json_encode, base64url_encode, base64url_decode
@@ -107,3 +108,15 @@ def validate_content_length(content: any, max_size: int):
             raise ValueError(
                 f"Content has length of {content_length} bytes which exceeds maximum size of {max_size} bytes"
             )
+
+
+def base36_decode_with_prefix(encoded_str):
+    # Strip the custom 'k' prefix before decoding, if it exists
+    if encoded_str.startswith('k'):
+        encoded_str = encoded_str[1:]
+
+    # Decode using the multibase base36 decoder
+    decoded_bytes = base36.decode(encoded_str)
+
+    # Convert the bytes to a list (if necessary)
+    return decoded_bytes
