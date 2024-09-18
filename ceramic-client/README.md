@@ -12,7 +12,7 @@ This Ceramic client implements the payload building, encoding, and signing neede
 ### Install the Ceramic client using pip
 
 ```bash
-pip3 install ceramic-py
+pip3 install ceramic_python
 ```
 
 ### Create a stream
