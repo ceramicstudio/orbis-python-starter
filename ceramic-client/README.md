@@ -19,7 +19,7 @@ pip3 install ceramic-py
 First, generate a Decentralized Identifier (DID) using a DID library.
 
 ```python
-from datetime import datetime, timezone
+from ceramic.helper import get_iso_timestamp
 from ceramic.did import DID
 from ceramic.ceramic_client import CeramicClient
 from ceramic.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
@@ -42,8 +42,8 @@ def create_document():
 
     content = {
         "title": "Alice",
-        "createdAt": datetime.now(timezone.utc).isoformat()[:-3] + "Z",
-        "updatedAt": datetime.now(timezone.utc).isoformat()[:-3] + "Z",
+        "createdAt": get_iso_timestamp(),
+        "updatedAt": get_iso_timestamp(),
     }
 
     doc = ModelInstanceDocument.create(ceramic_client, content, metadata_args)
@@ -102,7 +102,7 @@ def update_document(stream_id):
 
     updated_content = {
         "title": "Bob",
-        "updatedAt": datetime.now(timezone.utc).isoformat()[:-3] + "Z",
+        "updatedAt": get_iso_timestamp(),
     }
 
     updated = doc.replace(updated_content)
@@ -118,7 +118,8 @@ update_document(<STREAM_ID>)
 
 * Clone this repository
 ```shell
-git clone git@github.com:valory-xyz/ceramic-py.git
+git clone git@github.com:indexnetwork/ceramic-python.git
+cd ceramic-client
 ```
 * Install [Pipenv](https://pipenv.pypa.io/en/latest/).
 * Generate the virtual environment:
