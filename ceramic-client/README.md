@@ -1,4 +1,4 @@
-# Ceramic Py - Python client for Ceramic streams
+# Ceramic Python client
 
 This Ceramic client implements the payload building, encoding, and signing needed to interact with the [Ceramic Network](https://ceramic.network/). It currently supports `ModelInstanceDocument`.
 
