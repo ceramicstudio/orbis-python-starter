@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev
+      - main
     paths:
       - "ceramic-client/**"
   workflow_dispatch:
