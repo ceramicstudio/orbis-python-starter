@@ -5,13 +5,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="ceramic_python",
-    version="0.1.2",
+    version="0.1.3",
     author='Index',
     author_email='accounts@index.network',
     description="This Ceramic client implements the payload building, encoding, and signing needed to interact with the Ceramic Network. It currently supports ModelInstanceDocument.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/indexnetwork/ceramic-python/ceramic-client",
+    url="https://github.com/indexnetwork/ceramic-python/tree/main/ceramic-client",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
