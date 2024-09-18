@@ -26,7 +26,7 @@ jobs:
           pip install build twine
 
       - name: Build the package
-        run: python -m build sdk/python
+        run: python -m build ceramic-client
 
       - name: Publish package to PyPI
         working-directory: ceramic-client
