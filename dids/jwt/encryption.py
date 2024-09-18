@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, List
 
-from did_resolver import Resolver, Resolvable
-
 from .types import EphemeralKeyPair, EncryptionResult, Recipient
 
 
