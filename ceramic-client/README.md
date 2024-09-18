@@ -19,10 +19,10 @@ pip3 install ceramic_python
 First, generate a Decentralized Identifier (DID) using a DID library.
 
 ```python
-from ceramic.helper import get_iso_timestamp
-from ceramic.did import DID
-from ceramic.ceramic_client import CeramicClient
-from ceramic.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramic_python.helper import get_iso_timestamp
+from ceramic_python.did import DID
+from ceramic_python.ceramic_client import CeramicClient
+from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 
 def initialize_ceramic():
     did = DID(
@@ -58,9 +58,9 @@ create_document()
 ### Read stream
 
 ```python
-from ceramic.did import DID
-from ceramic.ceramic_client import CeramicClient
-from ceramic.model_instance_document import ModelInstanceDocument
+from ceramic_python.did import DID
+from ceramic_python.ceramic_client import CeramicClient
+from ceramic_python.model_instance_document import ModelInstanceDocument
 
 def initialize_ceramic():
     did = DID(
@@ -83,10 +83,10 @@ load_document(<STREAM_ID>)
 
 ### Update stream
 ```python
-from datetime import datetime, timezone
-from ceramic.did import DID
-from ceramic.ceramic_client import CeramicClient
-from ceramic.model_instance_document import ModelInstanceDocument
+from ceramic_python.helper import get_iso_timestamp
+from ceramic_python.did import DID
+from ceramic_python.ceramic_client import CeramicClient
+from ceramic_python.model_instance_document import ModelInstanceDocument
 
 def initialize_ceramic():
     did = DID(
