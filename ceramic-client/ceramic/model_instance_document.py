@@ -98,12 +98,12 @@ class ModelInstanceDocument:
 
         signer = ceramic_client.did
 
-
         commit = cls.make_genesis(signer, content, metadata_args)
         stream_id = ceramic_client.create_stream_from_genesis(
             cls.STREAM_TYPE_ID, commit, opts
         )
         state = ceramic_client.get_stream_state(stream_id)
+        
         metadata = ModelInstanceDocumentMetadata(
             controller=metadata_args.controller or signer.id,
             model=metadata_args.model,
@@ -111,6 +111,7 @@ class ModelInstanceDocument:
             context=metadata_args.context,
             shouldIndex=metadata_args.shouldIndex,
         )
+        
         content = state.get("content")
         return cls(
             ceramic_client=ceramic_client,
@@ -132,7 +133,8 @@ class ModelInstanceDocument:
         else:
             opts = {**DEFAULT_LOAD_OPTS, **opts}
 
-        state = ceramic_client.load_stream(stream_id, opts)
+        stream = ceramic_client.load_stream(stream_id, opts)
+        state = stream.get("state")
         content = state.get("content")
         metadata_state = state.get("metadata", {})
         metadata = ModelInstanceDocumentMetadata(

@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+from datetime import datetime, timezone, UTC
 from multiformats.multibase import base36
 from base64 import urlsafe_b64encode, b64encode, b64decode
 from jwcrypto import jwk, jws
@@ -120,3 +121,6 @@ def base36_decode_with_prefix(encoded_str):
 
     # Convert the bytes to a list (if necessary)
     return decoded_bytes
+
+def get_iso_timestamp():
+    return datetime.now(timezone.utc).isoformat()[:-3] + "Z"
