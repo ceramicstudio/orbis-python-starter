@@ -4,8 +4,6 @@ import random
 import datetime
 import re
 
-from cacao.cacao import Cacao
-from .types import ChainId, AccountId
 
 PERSONAL_SIGNATURE = "Personal signature"
 
@@ -83,40 +81,6 @@ class SiwxMessage:
                     parsed_data[key] = match.group(1).strip()
 
         return parsed_data
-
-    @classmethod
-    def from_cacao(cls, cacao: Cacao) -> 'SiwxMessage':
-        account = AccountId.parse(cacao.p.iss.replace('did:pkh:', ''))
-        siwx = cls({
-            "domain": cacao.p.domain,
-            "address": account.address,
-            "uri": cacao.p.aud,
-            "version": cacao.p.version,
-            "chainId": ChainId(account.chainId).reference,
-        })
-
-        if cacao.p.statement:
-            siwx.statement = cacao.p.statement
-        if cacao.p.nonce:
-            siwx.nonce = cacao.p.nonce
-        if cacao.p.iat:
-            siwx.issuedAt = cacao.p.iat
-        if cacao.p.exp:
-            siwx.expirationTime = cacao.p.exp
-        if cacao.p.nbf:
-            siwx.notBefore = cacao.p.nbf
-        if cacao.p.requestId:
-            siwx.requestId = cacao.p.requestId
-        if cacao.p.resources:
-            siwx.resources = cacao.p.resources
-
-        if cacao.s:
-            if cacao.s.s:
-                siwx.signature = cacao.s.s
-            if cacao.s.t == 'eip191':
-                siwx.type = PERSONAL_SIGNATURE
-
-        return siwx
 
     def to_message(self, chain: str, address: Optional[str] = None) -> str:
         header = f"{self.domain} wants you to sign in with your {chain} account:"
