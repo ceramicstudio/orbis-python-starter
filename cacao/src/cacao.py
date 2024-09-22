@@ -10,7 +10,7 @@ from .siwe import SiweMessage
 from .siws import SiwsMessage
 from .siwTezos import SiwTezosMessage
 from .siwStacks import SiwStacksMessage
-from .siwx import PERSONAL_SIGNATURE
+from .siwx import PERSONAL_SIGNATURE, SiwxMessage
 from .verification import Verifier
 
 CLOCK_SKEW_DEFAULT_SEC = 5 * 60
@@ -63,6 +63,7 @@ class Cacao:
     h: CacaoHeader
     p: CacaoPayload
     s: Optional[CacaoSignature] = None
+    message_object: Optional[SiwxMessage] = None
 
     def __init__(self):
         header = CacaoHeader('eip4361')
@@ -78,6 +79,7 @@ class Cacao:
         self.p = payload
 
     def from_siwe_message(self, siwe_message: SiweMessage):
+        self.message_object = siwe_message
         self.h.t = "eip4361"
         self.p.domain = siwe_message.domain
         self.p.iat = siwe_message.issuedAt
@@ -87,8 +89,7 @@ class Cacao:
         self.p.nonce = siwe_message.nonce
 
         if siwe_message.signature:
-            self.s.t = "eip191"
-            self.s.s = siwe_message.signature
+            self.s = CacaoSignature(t="eip191", s=siwe_message.signature)
         if siwe_message.notBefore:
             self.p.nbf = siwe_message.notBefore
         if siwe_message.expirationTime:
@@ -133,6 +134,7 @@ class Cacao:
         return SiweMessage(param=params)
 
     def from_siws_message(self, siws_message: SiwsMessage):
+        self.message_object = siws_message
         self.h.t = "caip122"
         self.p.domain = siws_message.domain
         self.p.iat = siws_message.issuedAt
@@ -142,8 +144,7 @@ class Cacao:
         self.p.nonce = siws_message.nonce
 
         if siws_message.signature:
-            self.s.t = "solana:ed25519"
-            self.s.s = siws_message.signature
+            self.s = CacaoSignature(t="solana:ed25519", s=siws_message.signature)
         if siws_message.notBefore:
             self.p.nbf = siws_message.notBefore
         if siws_message.expirationTime:
@@ -188,6 +189,7 @@ class Cacao:
         return SiwsMessage(param=params)
 
     def from_siw_tezos_message(self, siw_tezos_message: SiwTezosMessage):
+        self.message_object = siw_tezos_message
         self.h.t = "caip122"
         self.p.domain = siw_tezos_message.domain
         self.p.iat = siw_tezos_message.issuedAt
@@ -197,8 +199,7 @@ class Cacao:
         self.p.nonce = siw_tezos_message.nonce
 
         if siw_tezos_message.signature:
-            self.s.t = "tezos:ed25519"
-            self.s.s = siw_tezos_message.signature
+            self.s = CacaoSignature(t="tezos:ed25519", s=siw_tezos_message.signature)
         if siw_tezos_message.notBefore:
             self.p.nbf = siw_tezos_message.notBefore
         if siw_tezos_message.expirationTime:
@@ -243,6 +244,7 @@ class Cacao:
         return SiwTezosMessage(param=params)
 
     def from_siw_stacks_message(self, siw_stacks_message: SiwStacksMessage):
+        self.message_object = siw_stacks_message
         self.h.t = "caip122"
         self.p.domain = siw_stacks_message.domain
         self.p.iat = siw_stacks_message.issuedAt
@@ -252,8 +254,7 @@ class Cacao:
         self.p.nonce = siw_stacks_message.nonce
 
         if siw_stacks_message.signature:
-            self.s.t = "stacks:secp256k1"
-            self.s.s = siw_stacks_message.signature
+            self.s = CacaoSignature(t="stacks:secp256k1", s=siw_stacks_message.signature)
         if siw_stacks_message.notBefore:
             self.p.nbf = siw_stacks_message.notBefore
         if siw_stacks_message.expirationTime:
@@ -311,15 +312,15 @@ class Cacao:
         if not self.s:
             raise ValueError("CACAO does not have a signature")
 
-        if not verifier.verifier_type != self.s.t:
+        if verifier.verifier_type != self.s.t:
             raise ValueError("Unsupported CACAO signature type, register the needed verifier")
 
         self.time_checks(verifier)
 
-        verifier.verify(self.s.s, self.p.statement, self.p.iss.split(":")[4])
+        verifier.verify(self.s.s, self.message_object, self.p.iss.split(":")[4])
 
     def time_checks(self, verifier):
-        at_time = verifier.atTime if not verifier.atTime else datetime.now()
+        at_time = verifier.atTime if verifier.atTime else datetime.now()
         clock_skew = verifier.clockSkewSecs * 1000 if verifier.clockSkewSecs is not None else CLOCK_SKEW_DEFAULT_SEC * 1000
         issued_at = datetime.strptime(self.p.iat, '%Y-%m-%dT%H:%M:%SZ')
         if issued_at > at_time + timedelta(milliseconds=clock_skew):
@@ -328,8 +329,8 @@ class Cacao:
             not_before = datetime.strptime(self.p.nbf, '%Y-%m-%dT%H:%M:%SZ')
             if not_before > at_time + timedelta(milliseconds=clock_skew):
                 raise ValueError("CACAO is not valid yet")
-        if not verifier.disableExpirationCheck:
-            phase_out_miliseconds = verifier.phaseOutMiliseconds * 1000 if verifier.phaseOutMiliseconds else 0
+        if not verifier.disableExpirationCheck and self.p.exp is not None:
+            phase_out_miliseconds = verifier.revocationPhaseOutSecs * 1000 if verifier.revocationPhaseOutSecs is not None else 0
             if datetime.strptime(self.p.exp, '%Y-%m-%dT%H:%M:%SZ') + timedelta(
                     milliseconds=phase_out_miliseconds + clock_skew) < at_time:
                 raise ValueError("CACAO has expired")
