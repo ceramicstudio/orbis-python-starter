@@ -1,14 +1,14 @@
 # OrbisDB Python Starter
 
-This repository is a modified version of the Index Network [Ceramic-Python](https://github.com/indexnetwork/ceramic-python) library that includes examples and slight modifications to be compatible with OrbisDB.
+This repository is a modified version of the Index Network [Ceramic-Python](https://github.com/indexnetwork/ceramic-python) library that includes examples and slight alterations to be compatible with OrbisDB.
 
 ## Overview
 
-This demo repository is structured as a simple Flask server that exposes a class called `CeramicActions` found in [examples.py](examples.py). This example architecture emulates an AI agent environment, and therefore assigns three imaginary agents individual Ceramic private keys so they can author data to the network.
+This demo repository is structured as a simple Flask server that exposes a class called `CeramicActions` found in [examples.py](examples.py). This example architecture emulates an AI agent environment and assigns three imaginary agents individual Ceramic private keys to author data to the network.
 
-Additionally, for no reason in particlar, the demo uses a [pageview](definition.json) data model. This has already been deployed to Ceramic, and is therefore provided in the example .env file as the default table value. 
+Additionally, for no reason in particular, the demo uses a [pageview](definition.json) data model. This has already been deployed to Ceramic, and is therefore provided in the example .env file as the default table value. 
 
-Finally, this demo only displays the use of raw SQL queries for reading data. However, OrbisDB also exposes a GraphQL endpoint for read capabilities (that you can easily incorporate into your code, if preferred).
+Finally, this demo only uses raw SQL queries to read data. However, OrbisDB also exposes a GraphQL endpoint for read capabilities (that you can easily incorporate into your code if preferred).
 
 ## Getting Started
 
