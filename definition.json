@@ -1,0 +1,43 @@
+{
+  "name": "pageview",
+  "views": {
+    "issuer": {
+      "type": "documentAccount"
+    }
+  },
+  "schema": {
+    "type": "object",
+    "$defs": {
+      "DateTime": {
+        "type": "string",
+        "title": "DateTime",
+        "format": "date-time",
+        "maxLength": 100
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "required": ["page", "address", "timestamp", "customer_user_id"],
+    "properties": {
+      "page": {
+        "type": "string"
+      },
+      "address": {
+        "type": "string"
+      },
+      "timestamp": {
+        "$ref": "#/$defs/DateTime"
+      },
+      "customer_user_id": {
+        "type": "integer"
+      }
+    },
+    "additionalProperties": false
+  },
+  "version": "2.0",
+  "interface": false,
+  "implements": [],
+  "accountRelation": {
+    "type": "list"
+  },
+  "immutableFields": []
+}
