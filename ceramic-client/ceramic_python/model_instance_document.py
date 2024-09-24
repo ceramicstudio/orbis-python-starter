@@ -280,7 +280,7 @@ class ModelInstanceDocument:
             header["unique"] = b64encode(random_bytes).decode('utf-8')
 
         if metadata_args.context:
-            header["context"] = metadata_args.context
+            header["context"] = bytes(bytearray(list(base36_decode_with_prefix(metadata_args.context)))),
 
         
         return {"data": content, "header": header}
