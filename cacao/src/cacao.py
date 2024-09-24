@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
 from dataclasses import dataclass
-from multiprocessing.managers import Value
 from typing import Optional, Any, List, Dict, Literal
 
 import cbor2
-from multiformats import CID
 
 from .siwe import SiweMessage
 from .siws import SiwsMessage
@@ -12,6 +10,7 @@ from .siwTezos import SiwTezosMessage
 from .siwStacks import SiwStacksMessage
 from .siwx import PERSONAL_SIGNATURE, SiwxMessage
 from .verification import Verifier
+from .block import Block
 
 CLOCK_SKEW_DEFAULT_SEC = 5 * 60
 LEGACY_CHAIN_ID_REORG_DATE = int(datetime(2022, 9, 20).timestamp() * 1000)
@@ -77,6 +76,40 @@ class Cacao:
         )
         self.h = header
         self.p = payload
+
+    def to_encoder(self):
+        result = {
+            "h": {
+                "t": self.h.t,
+            },
+            "p": {
+                "domain": self.p.domain,
+                "iat": self.p.iat,
+                "iss": self.p.iss,
+                "aud": self.p.aud,
+                "version": self.p.version,
+                "nonce": self.p.nonce,
+            }
+        }
+        if self.p.nbf:
+            result["p"]["nbf"] = self.p.nbf
+        if self.p.exp:
+            result["p"]["exp"] = self.p.exp
+        if self.p.statement:
+            result["p"]["statement"] = self.p.statement
+        if self.p.requestId:
+            result["p"]["requestId"] = self.p.requestId
+        if self.p.resources:
+            result["p"]["resources"] = self.p.resources
+
+        if self.s:
+            result["s"] = {
+                "t": self.s.t,
+                "s": self.s.s,
+            }
+            if self.s.m:
+                result["s"]["m"] = self.s.m
+        return result
 
     def from_siwe_message(self, siwe_message: SiweMessage):
         self.message_object = siwe_message
@@ -343,8 +376,19 @@ class Cacao:
 @dataclass
 class CacaoBlock:
     value: Cacao
-    cid: CID
-    bytes: bytes
+    block: Block
+
+    def __init__(self, cacao: Cacao, block: Block):
+        self.value = cacao
+        self.block = block
+
+    @property
+    def cid(self):
+        return self.block.cid
+
+    @property
+    def bytes(self):
+        return self.block.encoded_data
 
 
 @dataclass
