@@ -322,7 +322,7 @@ class Cacao:
     def time_checks(self, verifier):
         at_time = verifier.atTime if verifier.atTime else datetime.now()
         clock_skew = verifier.clockSkewSecs * 1000 if verifier.clockSkewSecs is not None else CLOCK_SKEW_DEFAULT_SEC * 1000
-        issued_at = datetime.strptime(self.p.iat, '%Y-%m-%dT%H:%M:%SZ')
+        issued_at = datetime.strptime(self.p.iat, '%Y-%m-%dT%H:%M:%S.%fZ')
         if issued_at > at_time + timedelta(milliseconds=clock_skew):
             raise ValueError("CACAO is not valid yet")
         if self.p.nbf is not None:

@@ -51,7 +51,7 @@ class TestCacao(unittest.TestCase):
                 "uri": "did:key:z6MkrBdNdwUPnXDVD1DCxedzVVBpaGi8aSmoXFAeKNgtAer8",
                 "version": "1",
                 "nonce": "32891757",
-                "issuedAt": issued_at.isoformat() + "Z",
+                "issuedAt": issued_at.isoformat(timespec="milliseconds") + "Z",
                 "chainId": "1",
                 "resources": [
                     "ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",
@@ -62,7 +62,7 @@ class TestCacao(unittest.TestCase):
         eth_private_key = wallet.derive_account("eth", account=0)[0]
         message_to_sign = encode_defunct(text=siwe_message.sign_message(eip55=True))
         signed_message = Account.sign_message(message_to_sign, private_key=eth_private_key)
-        siwe_message.signature = signed_message.signature.hex()
+        siwe_message.signature = "0x" + signed_message.signature.hex()
         cacao_object = Cacao()
         cacao_object.from_siwe_message(siwe_message)
         cacao_object.verify(EIP191Verifier(verifier_type="eip191"))
