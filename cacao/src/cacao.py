@@ -364,7 +364,7 @@ class Cacao:
                 raise ValueError("CACAO is not valid yet")
         if not verifier.disableExpirationCheck and self.p.exp is not None:
             phase_out_miliseconds = verifier.revocationPhaseOutSecs * 1000 if verifier.revocationPhaseOutSecs is not None else 0
-            if datetime.strptime(self.p.exp, '%Y-%m-%dT%H:%M:%SZ') + timedelta(
+            if datetime.strptime(self.p.exp, '%Y-%m-%dT%H:%M:%S.%fZ') + timedelta(
                     milliseconds=phase_out_miliseconds + clock_skew) < at_time:
                 raise ValueError("CACAO has expired")
 
