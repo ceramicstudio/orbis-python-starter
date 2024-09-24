@@ -19,8 +19,7 @@ AGENT_ONE_SEED = os.getenv("AGENT_ONE_SEED")
 AGENT_TWO_SEED = os.getenv("AGENT_TWO_SEED")
 AGENT_THREE_SEED = os.getenv("AGENT_THREE_SEED")
 CERAMIC_ENDPOINT = os.getenv("CERAMIC_ENDPOINT")
-
-orbis_url = "https://studio.useorbis.com/api/db/query/json"
+ORBIS_ENDPOINT = os.getenv("ORBIS_ENDPOINT")
 
 switcher = {
 "agent_one": AGENT_ONE_SEED,
@@ -86,7 +85,7 @@ class CeramicActions:
         headers = {
             "Content-Type": "application/json"
         }
-        response = requests.post(url=orbis_url, headers=headers, json=body)
+        response = requests.post(url=ORBIS_ENDPOINT, headers=headers, json=body)
         pprint(response.json())
         return response.json()
     
@@ -112,6 +111,6 @@ class CeramicActions:
         headers = {
             "Content-Type": "application/json"
         }
-        response = requests.post(url=orbis_url, headers=headers, json=body)
+        response = requests.post(url=ORBIS_ENDPOINT, headers=headers, json=body)
         pprint(response.json())
         return response.json()

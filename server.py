@@ -15,7 +15,7 @@ def get():
     return json.dumps(ceramic.did)
 
 # POST http://127.0.0.1:5000/create_document?agent=agent_three
-# payload example: {"page": "/home", "address": "0x8071f6F971B438f7c0EA72C950430EE7655faBCe", "customer_user_id": "A2"}
+# payload example: {"page": "/home", "address": "0x8071f6F971B438f7c0EA72C950430EE7655faBCe", "customer_user_id": 3}
 @app.route('/create_document', methods=['POST'])
 def create_document():
     agent = request.args.get('agent')
