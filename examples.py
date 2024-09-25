@@ -6,7 +6,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from ceramic_python.did import DID
 from ceramic_python.ceramic_client import CeramicClient
-from ceramic_client.ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 import requests
 from key_did_provider_ed25519.src.key_did_provider_ed25519.utils import encode_did
 
