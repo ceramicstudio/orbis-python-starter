@@ -1,9 +1,6 @@
-import json
 import dag_cbor
-from multiformats import multihash, multicodec
+from multiformats import multihash
 from cid import make_cid
-
-from multiformats import CID
 
 
 class Block:

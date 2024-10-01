@@ -101,7 +101,7 @@ class TestCacao(unittest.TestCase):
         cacao_object = Cacao()
         cacao_object.from_siwe_message(siwe_message)
         cacao_object.verify(EIP191Verifier())
-        cacao_block = CacaoBlock(cacao_object, Block(cacao_object))
+        cacao_block = CacaoBlock(cacao_object)
         self.assertEqual(cacao_block.cid, "bafyreibaql5vt75krup6nazwid5yccoxodo7pqvreszapxlh56ovkhyazm")
 
     def test_siwe_expiration_within_phaseout(self):
@@ -287,5 +287,5 @@ class TestCacao(unittest.TestCase):
         cacao_object = Cacao()
         cacao_object.from_siws_message(siws_message)
         cacao_object.verify(SolanaVerifier())
-        cacao_block = CacaoBlock(cacao_object, Block(cacao_object))
+        cacao_block = CacaoBlock(cacao_object)
         self.assertEqual(cacao_block.cid, "bafyreiegtrmteagncsf3gi4csws3posuq6vpvlz2sjpbh22uxolzi74w6q")
