@@ -45,5 +45,17 @@ def get_filtered_documents():
     res = ceramic.get_with_filter(filter)
     return res
 
+# PATCH http://127.0.0.1:5000/update_document?agent=agent_two
+# payload example: {"document_id": "kjzl6kcym7w8y9j9dxto4h933lir60ek5q2r82x3r0ky56fzzty83fovwu4pn6f", "content": {"customer_user_id": 8} }
+@app.route('/update_document', methods=['PATCH'])
+def update_document():
+    agent = request.args.get('agent')
+    ceramic = CeramicActions(agent)
+    ceramic.initialize_ceramic()
+    content = request.json.get('content')
+    document_id = request.json.get('document_id')
+    doc = ceramic.update_document(document_id, content)
+    return json.dumps(doc)
+
 if __name__ == '__main__':
     app.run(debug=True)

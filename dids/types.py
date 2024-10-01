@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import TypedDict, Union, Dict, Optional, List, Any
+from typing import TypedDict, Union, Dict, Optional, List
+from abc import ABC, abstractmethod
 
 from .codecs import GeneralJWS
 from jwt.jwe import JWE
@@ -26,13 +27,17 @@ class DecryptJWEParams(TypedDict):
     did: Optional[str]
 
 
-def did_authenticate(params: AuthParams) -> GeneralJWS:
-    pass
+@dataclass
+class DIDProviderClient(ABC):
 
+    @abstractmethod
+    def did_authenticate(self, params: AuthParams) -> GeneralJWS:
+        pass
 
-def create_jws(params: CreateJWSParams) -> Dict[str, Any]:
-    pass
+    @abstractmethod
+    def did_create_jws(self, params: CreateJWSParams) -> GeneralJWS:
+        pass
 
-
-def decrypt_jwe(params: DecryptJWEParams) -> str:
-    pass
+    @abstractmethod
+    def did_decrypt_jwe(self, params: DecryptJWEParams) -> str:
+        pass

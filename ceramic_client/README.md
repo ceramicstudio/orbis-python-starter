@@ -81,7 +81,7 @@ load_document(<STREAM_ID>)
 
 ```
 
-### Update stream
+### Update stream (Replace)
 ```python
 from ceramic_python.helper import get_iso_timestamp
 from ceramic_python.did import DID
@@ -101,7 +101,8 @@ def update_document(stream_id):
     doc = ModelInstanceDocument.load(ceramic_client, stream_id)
 
     updated_content = {
-        "title": "Bob",
+        "title": "Second",
+        "createdAt": get_iso_timestamp(),
         "updatedAt": get_iso_timestamp(),
     }
 
@@ -113,6 +114,37 @@ def update_document(stream_id):
 update_document(<STREAM_ID>)
 ```
 
+### Update stream (Patch)
+```python
+from ceramic_python.helper import get_iso_timestamp
+from ceramic_python.did import DID
+from ceramic_python.ceramic_client import CeramicClient
+from ceramic_python.model_instance_document import ModelInstanceDocument
+
+def initialize_ceramic():
+    did = DID(
+        id="did:key:z6MkefHJkv4f658zsR59uRAZqCa8wuz8hKJ8VGQUHznN3XB9",
+        private_key="e40070a71c32a1b22dbd2123cde261446a9e9d2dfefefef03ec4619697d14eb2",
+    )
+    ceramic_client = CeramicClient("<CERAMIC_NODE_URL>", did)
+    return ceramic_client, did
+
+def patch_document(stream_id):
+    ceramic_client, _ = initialize_ceramic()
+    doc = ModelInstanceDocument.load(ceramic_client, stream_id)
+
+    patch = [
+        {"op": "replace", "path": "/title", "value": "Patched Title"},
+        {"op": "replace", "path": "/updatedAt", "value": get_iso_timestamp()}
+    ]
+
+    patched_doc = doc.patch(patch)
+    print(f"Stream patched. New content: {patched_doc.content}")
+    return patched_doc
+
+# Patch an existing stream
+patch_document(<STREAM_ID>)
+```
 
 ## For Developement
 

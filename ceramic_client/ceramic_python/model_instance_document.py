@@ -4,6 +4,7 @@ import json
 import os
 import dag_cbor
 import jsonpatch
+from multiformats import CID
 from typing import Any, Dict, List, Optional, Union
 from base64 import urlsafe_b64encode,b64encode
 from .ceramic_client import CeramicClient
@@ -175,7 +176,7 @@ class ModelInstanceDocument:
             header["shouldIndex"] = metadata_args.shouldIndex
 
         commit = self.make_update_commit(
-            signer, self.stream_id, self.content, new_content, header
+            self, signer, new_content, header
         )
 
         self.ceramic_client.apply_commit(self.stream_id, commit, opts)
@@ -203,11 +204,15 @@ class ModelInstanceDocument:
             if op["op"] in ["add", "replace"]:
                 validate_content_length(op.get("value"), self.MAX_DOCUMENT_SIZE)
 
+
+        genesis_cid_str, previous_cid_str = self.ceramic_client.get_stream_commits(self.stream_id)
+
         raw_commit = {
             "data": json_patch,
-            "prev": self.state.get("log")[-1].get("cid"),
-            "id": self.stream_id,
+            "prev": CID.decode(previous_cid_str),
+            "id": CID.decode(genesis_cid_str),
         }
+
 
         if metadata_args and metadata_args.shouldIndex is not None:
             raw_commit["header"] = {"shouldIndex": metadata_args.shouldIndex}
@@ -217,6 +222,8 @@ class ModelInstanceDocument:
         patched_content = jsonpatch.apply_patch(self.content, json_patch)
         self.content = patched_content
         self.state = self.ceramic_client.get_stream_state(self.stream_id)
+        
+        return self
 
     def should_index(self, should_index: bool, opts: Optional[Dict[str, Any]] = None):
         self.patch([], ModelInstanceDocumentMetadataArgs(None, None, shouldIndex=should_index), opts)
@@ -287,18 +294,19 @@ class ModelInstanceDocument:
 
     @staticmethod
     def make_update_commit(
+        self,
         signer: DID,
-        stream_id: str,
-        old_content: Optional[Dict[str, Any]],
         new_content: Optional[Dict[str, Any]],
         header: Optional[Dict[str, Any]] = None,
     ):
-        patch = jsonpatch.make_patch(old_content or {}, new_content or {}).patch
+        patch = jsonpatch.make_patch(self.content or {}, new_content or {}).patch
+        
+        genesis_cid_str, previous_cid_str = self.ceramic_client.get_stream_commits(self.stream_id)
 
         raw_commit = {
             "data": patch,
-            "prev": None,  # Should be set to the current tip CID
-            "id": stream_id,
+            "prev": CID.decode(previous_cid_str),
+            "id": CID.decode(genesis_cid_str),
         }
 
         if header:

@@ -123,4 +123,4 @@ def base36_decode_with_prefix(encoded_str):
     return decoded_bytes
 
 def get_iso_timestamp():
-    return datetime.now(timezone.utc).isoformat()[:-3] + "Z"
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f%z")

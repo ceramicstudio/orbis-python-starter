@@ -30,19 +30,40 @@ class CeramicClient:
             response.raise_for_status()
             data = response.json()
             return data["streamId"]
-        except Exception as e:
-            logging.error(f"Error creating stream: {str(e)}")
-            raise
+        except requests.exceptions.RequestException as e:
+            error_message = f"Error creating stream: {str(e)}"
+            if response.content:
+                error_message += f"\nResponse body: {response.content.decode('utf-8')}"
+            logging.error(error_message)
+            raise Exception(error_message) from e
 
     def get_stream_state(self, stream_id: str) -> Dict[str, Any]:
         try:
             response = requests.get(f"{self.url}/api/v0/streams/{stream_id}")
             response.raise_for_status()
-            res =  response.json()
+            res = response.json()
             return res.get("state")
         except requests.exceptions.RequestException as e:
-            logging.error(f"Error getting stream state: {str(e)}")
-            raise
+            error_message = f"Error getting stream state: {str(e)}"
+            if response.content:
+                error_message += f"\nResponse body: {response.content.decode('utf-8')}"
+            logging.error(error_message)
+            raise Exception(error_message) from e
+
+    def get_stream_commits(self, stream_id: str) -> Dict[str, Any]:
+        try:
+            response = requests.get(f"{self.url}/api/v0/commits/{stream_id}")
+            response.raise_for_status()
+            res = response.json()
+            genesis_cid_str = res["commits"][0]["cid"]
+            previous_cid_str = res["commits"][-1]["cid"]
+            return genesis_cid_str, previous_cid_str
+        except requests.exceptions.RequestException as e:
+            error_message = f"Error getting stream commits: {str(e)}"
+            if response.content:
+                error_message += f"\nResponse body: {response.content.decode('utf-8')}"
+            logging.error(error_message)
+            raise Exception(error_message) from e
 
     def load_stream(self, stream_id: str, opts: Dict[str, Any]) -> Dict[str, Any]:
         try:
@@ -50,8 +71,11 @@ class CeramicClient:
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
-            logging.error(f"Error loading stream: {str(e)}")
-            raise
+            error_message = f"Error loading stream: {str(e)}"
+            if response.content:
+                error_message += f"\nResponse body: {response.content.decode('utf-8')}"
+            logging.error(error_message)
+            raise Exception(error_message) from e
 
     def apply_commit(self, stream_id: str, commit: Dict[str, Any], opts: Dict[str, Any]):
         payload = {
@@ -65,11 +89,7 @@ class CeramicClient:
             return response.json()
         except requests.exceptions.RequestException as e:
             error_message = f"Error applying commit: {str(e)}"
-            logging.error(error_message)
             if response.content:
-                try:
-                    error_details = response.json()
-                    error_message += f" Server response: {error_details}"
-                except ValueError:
-                    error_message += f" Server response: {response.text}"
+                error_message += f"\nResponse body: {response.content.decode('utf-8')}"
+            logging.error(error_message)
             raise Exception(error_message) from e

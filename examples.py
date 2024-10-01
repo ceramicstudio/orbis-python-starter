@@ -114,3 +114,45 @@ class CeramicActions:
         response = requests.post(url=ORBIS_ENDPOINT, headers=headers, json=body)
         pprint(response.json())
         return response.json()
+    
+    def update_document(self, document_id, content):
+        ceramic_client = self.initialize_ceramic()
+        pprint(f"Initialized Ceramic client with DID: {self.did}")
+
+        metadata_args = ModelInstanceDocumentMetadataArgs(
+            controller=self.did,
+            model=TABLE_ID,
+            context=CONTEXT_ID,
+        )
+        
+        # Get the current date and time in UTC
+        current_time = datetime.now(timezone.utc)
+
+        # Format it as an ISO 8601 string
+        formatted_time = current_time.isoformat()
+        
+        content.update({
+            # get datetime
+            "timestamp": formatted_time,
+        })
+        
+        patch =[]
+        
+        modelInstance = ModelInstanceDocument.load(ceramic_client, stream_id=document_id)
+        new_doc = modelInstance.content.copy()
+
+        for key, value in content.items():
+            new_doc[key] = value
+            patch.append({
+                "op": "replace",
+                "path": f"/{key}",
+                "value": value
+            })
+        
+        modelInstance.patch(json_patch=patch, metadata_args=metadata_args, opts={'anchor': True, 'publish': True, 'sync': 0})
+        
+        # get updated state
+        new_state = ModelInstanceDocument.load(ceramic_client, stream_id=document_id).content
+
+        pprint(f"Stream updated with ID: {document_id}")
+        return new_state
