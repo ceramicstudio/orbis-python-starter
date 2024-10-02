@@ -57,5 +57,13 @@ def update_document():
     doc = ceramic.update_document(document_id, content)
     return json.dumps(doc)
 
+@app.route('/model_create', methods=['GET'])
+def create_model():
+    agent = request.args.get('agent')
+    ceramic = CeramicActions(agent)
+    ceramic.initialize_ceramic()
+    doc = ceramic.create_model()
+    return json.dumps(doc)
+
 if __name__ == '__main__':
     app.run(debug=True)

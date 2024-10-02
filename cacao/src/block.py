@@ -1,7 +1,6 @@
 import json
 import dag_cbor
 from multiformats import multihash, multicodec
-from cid import make_cid
 
 from multiformats import CID
 
@@ -18,7 +17,7 @@ class Block:
 
     def generate_cid(self):
         payload_hash = multihash.digest(self.encoded_data, "sha2-256")
-        cid = make_cid(1, "dag-cbor", payload_hash)
+        cid = CID(1, "dag-cbor", payload_hash)
         return cid.encode("base32").decode("utf-8")
 
     def decode_data(self):

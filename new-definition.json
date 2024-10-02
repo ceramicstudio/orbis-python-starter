@@ -1,0 +1,69 @@
+{
+  "name": "agent-credential",
+  "views": {
+    "issuer": {
+      "type": "documentAccount"
+    }
+  },
+  "schema": {
+    "type": "object",
+    "$defs": {
+      "CeramicStreamID": {
+        "type": "string",
+        "title": "CeramicStreamID",
+        "maxLength": 100
+      },
+      "DateTime": {
+        "type": "string",
+        "title": "DateTime",
+        "format": "date-time",
+        "maxLength": 100
+      }
+    },
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "required": ["trustworthiness", "issued", "agentId"],
+    "properties": {
+      "trustworthiness": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "type": "string"
+            },
+            "level": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "reason": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["scope", "level", "reason"],
+          "additionalProperties": false
+        }
+      },
+      "issued": {
+        "$ref": "#/$defs/DateTime"
+      },
+      "agentId": {
+        "$ref": "#/$defs/CeramicStreamID"
+      }
+    },
+    "additionalProperties": false
+  },
+  "version": "2.0",
+  "interface": false,
+
+  "implements": [],
+  "description": "A trust credential",
+  "accountRelation": {
+    "type": "set",
+    "fields": ["agentId"]
+  },
+  "immutableFields": []
+}

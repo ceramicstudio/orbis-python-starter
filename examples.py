@@ -1,12 +1,14 @@
 from dotenv import load_dotenv
 import os
+import json
 from pprint import pprint
 from datetime import datetime, timezone
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from ceramic_python.did import DID
-from ceramic_python.ceramic_client import CeramicClient
-from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramic_client.ceramic_python.ceramic_client import CeramicClient
+from ceramic_client.ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramic_client.ceramic_python.model import Model, ModelMetadataArgs, ModelMetadata
 import requests
 from key_did_provider_ed25519.src.key_did_provider_ed25519.utils import encode_did
 
@@ -156,3 +158,26 @@ class CeramicActions:
 
         pprint(f"Stream updated with ID: {document_id}")
         return new_state
+
+    def create_model(self):
+        ceramic_client = self.initialize_ceramic()
+        pprint(f"Initialized Ceramic client with DID: {self.did}")
+        
+        metadata_args = ModelMetadataArgs(
+            controller=self.did,
+        )
+        
+        with open('new-definition.json', 'r') as f:
+            data = json.load(f)
+            header = {
+            "controllers": [self.did],
+            "model": Model.MODEL().bytes,
+            "sep": "model",
+            }
+            commit = {"data": data, "header": header}
+            signed = ceramic_client.did.create_dag_jws(commit)
+            stream_id = ceramic_client.create_stream_from_genesis(
+                2, signed, {'anchor': True, 'publish': True, 'sync': 0}
+            )
+            # model = Model.create(ceramic_client, data, metadata_args)
+            pprint(stream_id)

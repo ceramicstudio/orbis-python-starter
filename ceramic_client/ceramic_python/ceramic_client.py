@@ -22,7 +22,8 @@ class CeramicClient:
             "opts": opts,
         }
         try:
-            response = requests.post(f"{self.url}/api/v0/streams", json=payload, timeout=2)
+            
+            response = requests.post(f"{self.url}/api/v0/streams", json=payload, timeout=10)
             logging.debug(f"Request URL: {f'{self.url}/api/v0/streams'}")
             logging.debug(f"Request Data: {payload}")
             logging.debug(f"Response Status Code: {response.status_code}")
