@@ -29,7 +29,7 @@ setup(
         "pytz==2023.3",
         "jsonpatch==1.33",
         "cryptography==41.0.1",
-        "jwcrypto==1.5.0",
+        "jwcrypto==1.5.6",
         "multiformats==0.3.1",
         "dag-cbor==0.3.2",
         "base58==2.1.1",
