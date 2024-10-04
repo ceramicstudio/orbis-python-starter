@@ -59,11 +59,7 @@ class DID:
             encoding=serialization.Encoding.Raw,
             format=serialization.PublicFormat.Raw
         ))
-        self.did = DID(
-            id=self._public_key,
-            private_key=self._private_key,
-        )
-        self.private_key = private_key
+        self._id = self._public_key  # Store the ID in a private attribute,
 
     @property
     def private_key(self):
@@ -73,11 +69,22 @@ class DID:
     def public_key(self):
         return self._public_key
     
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def did(self):
+        return {
+            "id": self.id,
+            "private_key": self._private_key
+        }
+    
     def as_controller(self):
-        return self.did.id
+        return self.id
 
     def create_dag_jws(self, payload: dict) -> dict:
-
+        
         encoded_bytes = dag_cbor.encode(data=payload)
         linked_block = b64encode(encoded_bytes).decode("utf-8")
 
@@ -95,8 +102,8 @@ class DID:
         signature_data = json.loads(
             sign_ed25519(
                 payload_cid.decode("utf-8"),
-                self.did.id,
-                self.did.private_key
+                self.id,
+                self.private_key
             )
         )
         

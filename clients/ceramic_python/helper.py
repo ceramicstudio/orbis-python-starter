@@ -1,10 +1,8 @@
 # ceramic/helper.py
 
-import hashlib
-import os
-from datetime import datetime, timezone, UTC
+from datetime import datetime, timezone
 from multiformats.multibase import base36
-from base64 import urlsafe_b64encode, b64encode, b64decode
+from base64 import urlsafe_b64encode
 from jwcrypto import jwk, jws
 from jwcrypto.common import json_encode, base64url_encode, base64url_decode
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey

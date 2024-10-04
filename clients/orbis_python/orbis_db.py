@@ -1,11 +1,11 @@
-from ceramic_client.ceramic_python.did import DID
-from ceramic_client.ceramic_python.ceramic_client import CeramicClient
-from ceramic_client.ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ..ceramic_python.did import DID
+from ..ceramic_python.ceramic_client import CeramicClient
+from ..ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 import requests
 from typing import Optional
 from pathlib import Path
 import json
-from ceramic_client.ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ..ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 
 class OrbisDB:
     """A relational database stored on OrbisDB/Ceramic"""
@@ -24,8 +24,8 @@ class OrbisDB:
         self.o_endpoint = o_endpoint
         self.context_stream = context_stream
         self.table_stream = table_stream
-        self.controller = DID(controller_private_key) if controller_private_key else None
-        self.ceramic_client = CeramicClient(c_endpoint, self.controller.did if self.controller else "")
+        self.controller = DID(private_key=controller_private_key)
+        self.ceramic_client = CeramicClient(c_endpoint, self.controller if self.controller else "")
 
 
     @classmethod
@@ -38,11 +38,11 @@ class OrbisDB:
         )
 
 
-    def read(self):
+    def read(self, env_id: str):
         """Read the db from Ceramic"""
         if not self.table_stream:
             raise ValueError("OrbisDB table stream has not being specified. Cannot read the database.")
-        return self.query(f"SELECT * FROM {self.table_stream}")
+        return self.query(env_id, f"SELECT * FROM {self.table_stream}")
 
 
     def dump(self, file_path: Path = Path("orbis_db.json")):

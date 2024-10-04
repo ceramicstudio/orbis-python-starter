@@ -4,7 +4,6 @@ jwcrypto
 multiformats
 web3
 cbor2
-ceramic-python==0.1.7
 anyio
 flask
 base32-lib

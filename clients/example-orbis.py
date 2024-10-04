@@ -1,4 +1,4 @@
-from orbis_db import OrbisDB
+from clients.orbis_python.orbis_db import OrbisDB
 import os
 
 CONTEXT_ID = os.getenv("CONTEXT_ID")
