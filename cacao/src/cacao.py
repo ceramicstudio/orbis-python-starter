@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass
 from typing import Optional, Any, List, Dict, Literal
 
-import cbor2
-
 from .siwe import SiweMessage
 from .siws import SiwsMessage
 from .siwTezos import SiwTezosMessage
@@ -14,20 +12,6 @@ from .block import Block
 
 CLOCK_SKEW_DEFAULT_SEC = 5 * 60
 LEGACY_CHAIN_ID_REORG_DATE = int(datetime(2022, 9, 20).timestamp() * 1000)
-
-
-class Block:
-    @staticmethod
-    def decode(bytes_data: bytes, codec='dag-cbor') -> 'Block':
-        if codec == 'dag-cbor':
-            decoded_value = cbor2.loads(bytes_data)
-        else:
-            raise ValueError(f"Unsupported codec: {codec}")
-
-        return Block(value=decoded_value)
-
-    def __init__(self, value):
-        self.value = value
 
 
 @dataclass
@@ -378,9 +362,9 @@ class CacaoBlock:
     value: Cacao
     block: Block
 
-    def __init__(self, cacao: Cacao, block: Block):
+    def __init__(self, cacao: Cacao):
         self.value = cacao
-        self.block = block
+        self.block = Block(cacao)
 
     @property
     def cid(self):
