@@ -1,6 +1,5 @@
 from orbis_db import OrbisDB
 import os
-from dotenv import load_dotenv
 
 CONTEXT_ID = os.getenv("CONTEXT_ID")
 
