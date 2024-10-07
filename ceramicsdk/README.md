@@ -1,15 +1,13 @@
-# Ceramic Python client
+# Ceramic and OrbisDB Python Client
 
-This Ceramic client implements the payload building, encoding, and signing needed to interact with the [Ceramic Network](https://ceramic.network/). It currently supports `ModelInstanceDocument`.
+These Orbis and Ceramic clients implements the payload building, encoding, and signing needed to interact with the [Ceramic Network](https://ceramic.network/). It currently supports `ModelInstanceDocument`.
 
 ## Features
 
 - Implements payload building, encoding, and signing for Ceramic interactions
 - Currently supports `ModelInstanceDocument`
 
-## Working with Ceramic streams
-
-### Install the Ceramic client using pip
+## Install the Ceramic client using pip
 
 ```bash
 pip3 install ceramic_python

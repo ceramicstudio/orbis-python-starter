@@ -1,8 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import os
 from dotenv import load_dotenv
-from examples import CeramicActions
-from clients.orbis_python.orbis_db import OrbisDB
+from ceramicsdk import OrbisDB
 from flask import Flask, request
 import json
 
@@ -35,7 +34,7 @@ def get():
                     context_stream=CONTEXT_ID, 
                     table_stream=TABLE_ID, 
                     controller_private_key=seed)
-    return json.dumps(orbis.ceramic_client.did)
+    return json.dumps(orbis.ceramic_client.did.id)
 
 # POST http://127.0.0.1:5000/create_document?agent=agent_three
 # {"page": "/home", "address": "0x8071f6F971B438f7c0EA72C950430EE7655faBCe", "customer_user_id": 3, "timestamp": "2024-09-25T15:06:14.957719+00:00"}

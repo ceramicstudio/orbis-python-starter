@@ -6,7 +6,7 @@ on:
       - dev
       - main
     paths:
-      - "ceramic-client/**"
+      - "ceramicsdk/**"
   workflow_dispatch:
 jobs:
   publish-to-pypi:
