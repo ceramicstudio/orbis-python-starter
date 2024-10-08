@@ -26,10 +26,10 @@ jobs:
           pip install build twine
 
       - name: Build the package
-        run: python -m build ceramic-client
+        run: python -m build ceramicsdk
 
       - name: Publish package to PyPI
-        working-directory: ceramic-client
+        working-directory: ceramicsdk
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
