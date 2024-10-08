@@ -4,7 +4,10 @@ import dag_cbor
 import json
 from base64 import urlsafe_b64encode, b64encode, b64decode
 import hashlib
-
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ed25519
+import os
+from key_did_provider_ed25519.src.key_did_provider_ed25519.utils import encode_did
 from .helper import sign_ed25519
 from multiformats import CID
 
@@ -48,15 +51,40 @@ def decode_linked_block(linked_block: str) -> dict:
     return dag_cbor.decode(encoded_bytes)
 
 class DID:
-    def __init__(self, id: str, private_key: str):
-        self.id = id
-        self.private_key = private_key
+    def __init__(self, private_key = None) -> None:
+        self._private_key = private_key or os.urandom(32).hex()
+        self.ed25519_private_key = ed25519.Ed25519PrivateKey.from_private_bytes(bytes.fromhex(self._private_key))
+        self.ed25519_public_key = self.ed25519_private_key.public_key()
+        self._public_key = encode_did(self.ed25519_public_key.public_bytes(
+            encoding=serialization.Encoding.Raw,
+            format=serialization.PublicFormat.Raw
+        ))
+        self._id = self._public_key  # Store the ID in a private attribute,
 
+    @property
+    def private_key(self):
+        return self._private_key
+
+    @property
+    def public_key(self):
+        return self._public_key
+    
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def did(self):
+        return {
+            "id": self.id,
+            "private_key": self._private_key
+        }
+    
     def as_controller(self):
         return self.id
 
     def create_dag_jws(self, payload: dict) -> dict:
-
+        
         encoded_bytes = dag_cbor.encode(data=payload)
         linked_block = b64encode(encoded_bytes).decode("utf-8")
 
