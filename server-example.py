@@ -1,4 +1,3 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
 import os
 from dotenv import load_dotenv
 from ceramicsdk import OrbisDB
