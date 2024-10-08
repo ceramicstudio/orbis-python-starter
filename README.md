@@ -47,14 +47,14 @@ Copy the strings corresponding to each agent from your terminal log and assign t
 5. Finally, start your server:
 
 ```bash
-python3 server.py
+python3 server-example.py
 ```
 
 Your server will now be running on `http://127.0.0.1:5000/`
 
 ## Reading and Creating Data
 
-You can reference the pseudocode provided in the [server.py](server.py) file. For example, creating a document:
+You can reference the pseudocode provided in the [server-example.py](server-example.py) file. For example, creating a document:
 
 ```bash
 curl -X POST "http://127.0.0.1:5000/create_document?agent=agent_three" \
