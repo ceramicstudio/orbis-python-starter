@@ -7,156 +7,78 @@ These Orbis and Ceramic clients implements the payload building, encoding, and s
 - Implements payload building, encoding, and signing for Ceramic interactions
 - Currently supports `ModelInstanceDocument`
 
-## Install the Ceramic client using pip
+## Install the library using pip
 
 ```bash
-pip3 install ceramic_python
+pip3 install ceramicsdk
 ```
 
-### Create a stream
+### Instantiating a Client
+
+You can use the [Orbis Studio](https://studio.useorbis.com/) or run a local or self-hosted [OrbisDB Instance](https://orbisclub.notion.site/Local-d3e9dd97e97b4c00a530b6ada20a8536) to locate and configure your context ID, environment ID, and node endpoints (used below).
+
+This README will utilize this [data model](https://cerscan.com/mainnet/stream/kjzl6hvfrbw6c6adsnzvbyr6itmf0igfy25xu0mqzei2pe2xw1hlusqyuknb9ky) as the input example.
+
 First, generate a Decentralized Identifier (DID) using a DID library.
 
 ```python
-from ceramic_python.helper import get_iso_timestamp
-from ceramic_python.did import DID
-from ceramic_python.ceramic_client import CeramicClient
-from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramicsdk import OrbisDB
 
-def initialize_ceramic():
-    did = DID(
-        id="did:key:z6MkefHJkv4f658zsR59uRAZqCa8wuz8hKJ8VGQUHznN3XB9",
-        private_key="e40070a71c32a1b22dbd2123cde261446a9e9d2dfefefef03ec4619697d14eb2",
-    )
-    ceramic_client = CeramicClient("<CERAMIC_NODE_URL>", did)
-    return ceramic_client, did
+# using an existing data model example
+table = "kjzl6hvfrbw6c6adsnzvbyr6itmf0igfy25xu0mqzei2pe2xw1hlusqyuknb9ky"
 
-def create_document():
-    ceramic_client, did = initialize_ceramic()
+# using an existing context id
+context = "<your-context-here>"
 
-    metadata_args = ModelInstanceDocumentMetadataArgs(
-        controller=did.id,
-        model="kjzl6hvfrbw6c7wjdc58s11ru9y3h2ubzq6yixqy134xkc63bnnzjcnwaimf711",
-    )
+# dedicated orbis and ceramic endpoints 
+o_endpoint = "<your-endpoint-here>"
+c_endpoint = "<your-endpoint-here>"
 
-    content = {
-        "title": "Alice",
-        "createdAt": get_iso_timestamp(),
-        "updatedAt": get_iso_timestamp(),
-    }
+# create a private key
+privkey = os.urandom(32).hex()
 
-    doc = ModelInstanceDocument.create(ceramic_client, content, metadata_args)
-    print(f"Stream created with ID: {doc.stream_id}")
-    return doc
-
-# Create a new stream
-create_document()
+# creating a client
+db = OrbisDB(c_endpoint, o_endpoint, context, table, privkey)
 ```
 
-
-### Read stream
+### Creating a Row
 
 ```python
-from ceramic_python.did import DID
-from ceramic_python.ceramic_client import CeramicClient
-from ceramic_python.model_instance_document import ModelInstanceDocument
-
-def initialize_ceramic():
-    did = DID(
-        id="did:key:z6MkefHJkv4f658zsR59uRAZqCa8wuz8hKJ8VGQUHznN3XB9",
-        private_key="e40070a71c32a1b22dbd2123cde261446a9e9d2dfefefef03ec4619697d14eb2",
-    )
-    ceramic_client = CeramicClient("<CERAMIC_NODE_URL>", did)
-    return ceramic_client, did
-
-def load_document(stream_id):
-    ceramic_client, _ = initialize_ceramic()
-    doc = ModelInstanceDocument.load(ceramic_client, stream_id)
-    print(f"Data from stream: {doc.content}")
-    return doc
-
-# Load data from a specific stream
-load_document(<STREAM_ID>)
-
+# input content must conform to data model used
+doc = db.add_row({
+    page: "/home",
+    address: "0x8071f6F971B438f7c0EA72C950430EE7655faBCe",
+    customer_user_id: 3,
+    timestamp: "2024-09-25T15:06:14.957719+00:00"
+})
 ```
 
-### Update stream (Replace)
+### Reading Data
+
 ```python
-from ceramic_python.helper import get_iso_timestamp
-from ceramic_python.did import DID
-from ceramic_python.ceramic_client import CeramicClient
-from ceramic_python.model_instance_document import ModelInstanceDocument
+env_id = "<your-env-id-here>"
 
-def initialize_ceramic():
-    did = DID(
-        id="did:key:z6MkefHJkv4f658zsR59uRAZqCa8wuz8hKJ8VGQUHznN3XB9",
-        private_key="e40070a71c32a1b22dbd2123cde261446a9e9d2dfefefef03ec4619697d14eb2",
-    )
-    ceramic_client = CeramicClient("<CERAMIC_NODE_URL>", did)
-    return ceramic_client, did
+# select rows without any filters
+docs = orbis.read(env_id)
 
-def update_document(stream_id):
-    ceramic_client, _ = initialize_ceramic()
-    doc = ModelInstanceDocument.load(ceramic_client, stream_id)
-
-    updated_content = {
-        "title": "Second",
-        "createdAt": get_iso_timestamp(),
-        "updatedAt": get_iso_timestamp(),
-    }
-
-    updated = doc.replace(updated_content)
-    print(f"Updated data: {updated.content}")
-    return updated
-
-# Update an existing stream
-update_document(<STREAM_ID>)
+# using a defined query
+q = 'SELECT * FROM kjzl6hvfrbw6c6adsnzvbyr6itmf0igfy25xu0mqzei2pe2xw1hlusqyuknb9ky as table WHERE table.customer_user_id = 3'
+queried_rows = db.query(env_id, q)
 ```
 
-### Update stream (Patch)
+### Updating Data
+
 ```python
-from ceramic_python.helper import get_iso_timestamp
-from ceramic_python.did import DID
-from ceramic_python.ceramic_client import CeramicClient
-from ceramic_python.model_instance_document import ModelInstanceDocument
+# add a filter to select specific row
+filters={"customer_user_id": 3}
 
-def initialize_ceramic():
-    did = DID(
-        id="did:key:z6MkefHJkv4f658zsR59uRAZqCa8wuz8hKJ8VGQUHznN3XB9",
-        private_key="e40070a71c32a1b22dbd2123cde261446a9e9d2dfefefef03ec4619697d14eb2",
-    )
-    ceramic_client = CeramicClient("<CERAMIC_NODE_URL>", did)
-    return ceramic_client, did
+# new content to replace the old
+new_content={"customer_user_id": 2}
 
-def patch_document(stream_id):
-    ceramic_client, _ = initialize_ceramic()
-    doc = ModelInstanceDocument.load(ceramic_client, stream_id)
-
-    patch = [
-        {"op": "replace", "path": "/title", "value": "Patched Title"},
-        {"op": "replace", "path": "/updatedAt", "value": get_iso_timestamp()}
-    ]
-
-    patched_doc = doc.patch(patch)
-    print(f"Stream patched. New content: {patched_doc.content}")
-    return patched_doc
-
-# Patch an existing stream
-patch_document(<STREAM_ID>)
+updated_rows = db.update_rows(env_id, filters, new_content)
 ```
 
-## For Developement
-
-* Clone this repository
-```shell
-git clone git@github.com:indexnetwork/ceramic-python.git
-cd ceramic-client
-```
-* Install [Pipenv](https://pipenv.pypa.io/en/latest/).
-* Generate the virtual environment:
-```shell
-make new_env && pipenv shell
-```
 
 ## Credits
 
-This project is largely based on the work done by the team at https://github.com/valory-xyz/ceramic-py/. We are grateful for their contributions to the Ceramic ecosystem and the open-source community.
+This project is largely based on the work done by the team at https://github.com/valory-xyz/ceramic-py/, and by the team at https://github.com/indexnetwork/ceramic-python. We are grateful for their contributions to the Ceramic ecosystem and the open-source community.
