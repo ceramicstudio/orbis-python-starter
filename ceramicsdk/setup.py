@@ -27,7 +27,7 @@ setup(
         "python-dateutil==2.8.2",
         "pytz==2023.3",
         "jsonpatch==1.33",
-        "cryptography==41.0.1",
+        "cryptography==43.0.1",
         "jwcrypto==1.5.0",
         "multiformats==0.3.1",
         "dag-cbor==0.3.2",
