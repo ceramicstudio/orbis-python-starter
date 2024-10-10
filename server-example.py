@@ -6,7 +6,7 @@ import json
 
 app = Flask(__name__)
 
-load_dotenv()
+load_dotenv(dotenv_path='.env',override=True)
 
 ENV_ID = os.getenv("ENV_ID")
 TABLE_ID = os.getenv("TABLE_ID")
