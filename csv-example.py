@@ -18,19 +18,7 @@ ORBIS_ENDPOINT = os.getenv("ORBIS_ENDPOINT")
 filename = 'sample.csv'
 
 
-def get():
-    seed = os.urandom(32).hex()
-    print(CERAMIC_ENDPOINT)
-    orbis = OrbisDB(c_endpoint=CERAMIC_ENDPOINT, 
-                    o_endpoint=ORBIS_ENDPOINT, 
-                    context_stream=CONTEXT_ID, 
-                    table_stream=TABLE_ID, 
-                    controller_private_key=seed)
-    print(orbis.ceramic_client.did.id)
-    return json.dumps(orbis.ceramic_client.did.id)
-
-
-def create_document():
+def create_documents():
     seed = os.urandom(32).hex()
     orbis = OrbisDB(c_endpoint=CERAMIC_ENDPOINT, 
                     o_endpoint=ORBIS_ENDPOINT, 
@@ -53,4 +41,4 @@ def create_document():
     # Return stringified stream_id
     return json.dumps(doc)
 
-create_document()
+create_documents()
