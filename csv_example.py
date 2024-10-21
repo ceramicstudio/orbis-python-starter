@@ -41,4 +41,3 @@ def create_documents():
     # Return stringified stream_id
     return json.dumps(doc)
 
-create_documents()

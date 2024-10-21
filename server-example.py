@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from ceramicsdk import OrbisDB
 from flask import Flask, request
 import json
+from csv_example import create_documents
 
 app = Flask(__name__)
 
@@ -64,6 +65,10 @@ def get_documents():
                     controller_private_key=seed)
     
     return orbis.read(ENV_ID)
+
+@app.route('/upload', methods=['GET'])
+def upload_csv():
+    return create_documents()
 
 ## Need to update below
 
