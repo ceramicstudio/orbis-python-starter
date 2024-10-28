@@ -7,7 +7,7 @@ import hashlib
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 import os
-from key_did_provider_ed25519.src.key_did_provider_ed25519.utils import encode_did
+from .utils import encode_did
 from .helper import sign_ed25519
 from multiformats import CID
 

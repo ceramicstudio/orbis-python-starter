@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="ceramicsdk",
-    version="0.1.1",
+    version="0.1.2",
     author='Ceramic Ecosystem Developers',
     description="This Ceramic client implements the payload building, encoding, and signing needed to interact with the Ceramic Network. It currently supports ModelInstanceDocument and OrbisDB.",
     long_description=long_description,

@@ -1,11 +1,11 @@
-from ceramicsdk.ceramic_python.did import DID
-from ceramicsdk.ceramic_python.ceramic_client import CeramicClient
-from ceramicsdk.ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramic_python.did import DID
+from ceramic_python.ceramic_client import CeramicClient
+from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 import requests
 from typing import Optional
 from pathlib import Path
 import json
-from ceramicsdk.ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
+from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 
 class OrbisDB:
     """A relational database stored on OrbisDB/Ceramic"""
