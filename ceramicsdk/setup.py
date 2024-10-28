@@ -5,13 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="ceramicsdk",
-    version="0.1.0",
+    version="0.1.1",
     author='Ceramic Ecosystem Developers',
     description="This Ceramic client implements the payload building, encoding, and signing needed to interact with the Ceramic Network. It currently supports ModelInstanceDocument and OrbisDB.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ceramicstudio/orbis-python-starter/tree/main/py_lib",
-    packages=find_packages(include=['ceramicsdk', 'ceramicsdk.*']),
+    packages=find_packages(where='.', exclude=['examples*', 'tests*']),
+    package_data={'': ['*.md']},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
