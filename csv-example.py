@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from ceramicsdk import OrbisDB
+from orbis_python import OrbisDB
 import json
 import csv
 from typing import List, Dict

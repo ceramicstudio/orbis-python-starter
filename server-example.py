@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from ceramicsdk import OrbisDB
+from orbis_python import OrbisDB
 from flask import Flask, request
 import json
 
