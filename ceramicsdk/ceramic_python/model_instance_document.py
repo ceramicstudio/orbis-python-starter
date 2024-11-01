@@ -273,21 +273,31 @@ class ModelInstanceDocument:
         validate_content_length(content, ModelInstanceDocument.MAX_DOCUMENT_SIZE)
 
         controller = metadata_args.controller or signer.as_controller()
+        
+        # Encode model ID as base64 string
+        model_bytes = bytes(bytearray(list(base36_decode_with_prefix(metadata_args.model))))
+        model_b64 = b64encode(model_bytes).decode('utf-8')
         header = {
             "controllers": [controller],  # Remove the extra list encapsulation
+            "sep": "model",
+            "model": model_b64,
+        } if metadata_args.deterministic else {
+            "controllers": [controller],
             "sep": "model",
             "model": bytes(bytearray(list(base36_decode_with_prefix(metadata_args.model)))),
         }
 
         if metadata_args.deterministic:
             if unique:
-                header["unique"] = "|".join(unique).encode("utf-8")
+                header["unique"] = "|".join(unique)
         else:
             random_bytes = os.urandom(12)
             header["unique"] = b64encode(random_bytes).decode('utf-8')
 
         if metadata_args.context:
-            header["context"] = bytes(bytearray(list(base36_decode_with_prefix(metadata_args.context))))
+            context_bytes = bytes(bytearray(list(base36_decode_with_prefix(metadata_args.context))))
+            context_b64 = b64encode(context_bytes).decode('utf-8')
+            header["context"] = context_b64 if metadata_args.deterministic else bytes(bytearray(list(base36_decode_with_prefix(metadata_args.context))))
 
         
         return {"data": content, "header": header}

@@ -58,13 +58,29 @@ class OrbisDB:
         if not self.controller:
             raise ValueError("Read-only database. OrbisDB controller has not being specified. Cannot write to the database.")
 
+        # Check if model requires deterministic (set or single relation)
+        model_type = self.ceramic_client.load_stream(self.table_stream, opts={"sync": 0})["state"]["content"]["accountRelation"]["type"]
+        is_set_or_single = model_type in ["set", "single"]
+        
         metadata_args = ModelInstanceDocumentMetadataArgs(
             controller=self.controller.public_key,
             model=self.table_stream,
-            context=self.context_stream
+            context=self.context_stream,
+            deterministic=False
+        ) if not is_set_or_single else ModelInstanceDocumentMetadataArgs(
+            controller=self.controller.public_key,
+            model=self.table_stream,
+            context=self.context_stream,
+            deterministic=True
         )
 
-        doc = ModelInstanceDocument.create(self.ceramic_client, entry_data, metadata_args)
+        doc = ModelInstanceDocument.create(self.ceramic_client, entry_data, metadata_args) if not is_set_or_single else ModelInstanceDocument.create(
+            ceramic_client=self.ceramic_client,
+            content=None,  # Must be None for deterministic creation
+            metadata_args=metadata_args
+        )
+        if is_set_or_single:
+            doc.replace(entry_data)
         return doc.stream_id
 
 
