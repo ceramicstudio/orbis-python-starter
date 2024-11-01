@@ -24,7 +24,7 @@ setup(
     ],
     python_requires=">=3.7",
     install_requires=[
-        "requests==2.31.0",
+        "requests==2.32.2",
         "python-dateutil==2.8.2",
         "pytz==2023.3",
         "jsonpatch==1.33",
