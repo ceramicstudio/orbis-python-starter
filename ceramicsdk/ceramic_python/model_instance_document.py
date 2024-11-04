@@ -223,7 +223,7 @@ class ModelInstanceDocument:
         self.content = patched_content
         self.state = self.ceramic_client.get_stream_state(self.stream_id)
         
-        return self
+        return patched_content
 
     def should_index(self, should_index: bool, opts: Optional[Dict[str, Any]] = None):
         self.patch([], ModelInstanceDocumentMetadataArgs(None, None, shouldIndex=should_index), opts)

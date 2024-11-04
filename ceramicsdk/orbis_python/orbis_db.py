@@ -5,7 +5,6 @@ import requests
 from typing import Optional
 from pathlib import Path
 import json
-from ceramic_python.model_instance_document import ModelInstanceDocument, ModelInstanceDocumentMetadataArgs
 
 class OrbisDB:
     """A relational database stored on OrbisDB/Ceramic"""
@@ -21,7 +20,9 @@ class OrbisDB:
 
         if not table_stream and not controller_private_key:
             raise ValueError("Either the table stream or the controller needs to be specified when instantiating an OrbisDB class")
-        self.o_endpoint = o_endpoint
+        # strip trailing slash
+        self.o_endpoint = o_endpoint.rstrip("/")
+        self.read_endpoint = self.o_endpoint + "/api/db/query/json"
         self.context_stream = context_stream
         self.table_stream = table_stream
         self.controller = DID(private_key=controller_private_key)
@@ -84,20 +85,21 @@ class OrbisDB:
         return doc.stream_id
 
 
-    def update_rows(self, filters, new_content: dict):
+    def update_rows(self, env_id: str, filters: dict, new_content: dict):
         """Update rows"""
 
         if not self.controller:
             raise ValueError("Read-only database. OrbisDB controller has not being specified. Cannot write to the database.")
 
-        document_ids = [row["stream_id"] for row in self.filter(filters)]
+        document_ids = [row["stream_id"] for row in self.filter(env_id, filters)]
 
         metadata_args = ModelInstanceDocumentMetadataArgs(
             controller=self.controller.public_key,
             model=self.table_stream,
             context=self.context_stream,
         )
-
+        return_vals = []
+        
         for document_id in document_ids:
             patch = []
 
@@ -112,9 +114,10 @@ class OrbisDB:
                     "value": value
                 })
 
-            modelInstance.patch(json_patch=patch, metadata_args=metadata_args, opts={'anchor': True, 'publish': True, 'sync': 0})
-
-        return len(document_ids)
+            item = modelInstance.patch(json_patch=patch, metadata_args=metadata_args, opts={'anchor': True, 'publish': True, 'sync': 0})
+            return_vals.append(item)
+            
+        return return_vals
 
 
     def query(self, env_id: str, query: str):
@@ -135,7 +138,7 @@ class OrbisDB:
         headers = {
             "Content-Type": "application/json"
         }
-        response = requests.post(url=self.o_endpoint, headers=headers, json=body)
+        response = requests.post(url=self.read_endpoint, headers=headers, json=body)
         return response.json()["data"]
 
 
@@ -158,7 +161,7 @@ class OrbisDB:
         headers = {
             "Content-Type": "application/json"
         }
-        response = requests.post(url=self.o_endpoint, headers=headers, json=body)
+        response = requests.post(url=self.read_endpoint, headers=headers, json=body)
         return response.json().get("data", [])
 
 

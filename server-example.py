@@ -68,32 +68,36 @@ def get_documents():
 ## Need to update below
 
 # # GET http://127.0.0.1:5000/filter?customer_user_id=3&agent=agent_two
-# @app.route('/filter')
-# def get_filtered_documents():
-#     agent = request.args.get('agent')
-#     seed = switcher.get(agent)
-#     orbis = OrbisDB(c_endpoint=CERAMIC_ENDPOINT, 
-#                     o_endpoint=ORBIS_ENDPOINT, 
-#                     context_stream=CONTEXT_ID, 
-#                     table_stream=TABLE_ID, 
-#                     controller_private_key=seed)
+@app.route('/filter')
+def get_filtered_documents():
+    agent = request.args.get('agent')
+    seed = switcher.get(agent)
+    orbis = OrbisDB(c_endpoint=CERAMIC_ENDPOINT, 
+                    o_endpoint=ORBIS_ENDPOINT, 
+                    context_stream=CONTEXT_ID, 
+                    table_stream=TABLE_ID, 
+                    controller_private_key=seed)
     
-#     # Get the filter from the query string but remove the agent key
-#     filter = {k: v for k, v in request.args.items() if k != 'agent'}
-#     res = ceramic.get_with_filter(filter)
-#     return res
+    # Get the filter from the query string but remove the agent key
+    filter = {k: v for k, v in request.args.items() if k != 'agent'}
+    res = orbis.filter(ENV_ID, filter)
+    return res
 
 # # PATCH http://127.0.0.1:5000/update_document?agent=agent_two
-# # payload example: {"document_id": "kjzl6kcym7w8y9j9dxto4h933lir60ek5q2r82x3r0ky56fzzty83fovwu4pn6f", "content": {"customer_user_id": 8} }
-# @app.route('/update_document', methods=['PATCH'])
-# def update_document():
-#     agent = request.args.get('agent')
-#     ceramic = CeramicActions(agent)
-#     ceramic.initialize_ceramic()
-#     content = request.json.get('content')
-#     document_id = request.json.get('document_id')
-#     doc = ceramic.update_document(document_id, content)
-#     return json.dumps(doc)
+# # payload example: { "filters": {"customer_user_id": 3 }, "content": {"customer_user_id": 4} }
+@app.route('/update_document', methods=['PATCH'])
+def update_document():
+    agent = request.args.get('agent')
+    seed = switcher.get(agent)
+    orbis = OrbisDB(c_endpoint=CERAMIC_ENDPOINT, 
+                    o_endpoint=ORBIS_ENDPOINT, 
+                    context_stream=CONTEXT_ID, 
+                    table_stream=TABLE_ID, 
+                    controller_private_key=seed)
+    content = request.json.get('content')
+    filters = request.json.get('filters')
+    doc = orbis.update_rows(ENV_ID, filters, content)
+    return doc
 
 if __name__ == '__main__':
     app.run(debug=True)
